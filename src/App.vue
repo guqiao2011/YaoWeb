@@ -6,6 +6,7 @@
     <nav>
       <RouterLink to="/">首页</RouterLink>
       <RouterLink to="/about">关于</RouterLink>
+      <RouterLink to="/admin">后台管理</RouterLink>
     </nav>
   </header>
 
