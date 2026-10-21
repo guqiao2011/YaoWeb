@@ -112,6 +112,18 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
 - **涉及文件**：
   - `src/views/LoginView.vue`
 
+#### 7. 登录页添加美观背景
+
+- **需求**：为登录页增加一个好看的背景，提升视觉效果。
+- **实现内容**：
+  - 更新 `src/views/LoginView.vue`：
+    - 背景改为蓝绿紫三色渐变。
+    - 添加 3 个模糊浮动光斑，使用 `radial-gradient` 和 `filter: blur`。
+    - 光斑带有缓慢的浮动动画。
+    - 登录卡片改为半透明白底、圆角、阴影和轻微毛玻璃效果。
+- **涉及文件**：
+  - `src/views/LoginView.vue`
+
 ---
 
 ## 后续变更约定
