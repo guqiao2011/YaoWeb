@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -8,21 +8,88 @@ const auth = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const captchaInput = ref('')
 const error = ref('')
 const loading = ref(false)
+const captchaCode = ref('')
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
+function generateCaptcha() {
+  let code = ''
+  for (let i = 0; i < 4; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  captchaCode.value = code
+  drawCaptcha(code)
+}
+
+function drawCaptcha(code: string) {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  const width = canvas.width
+  const height = canvas.height
+
+  ctx.fillStyle = '#f9fafb'
+  ctx.fillRect(0, 0, width, height)
+
+  for (let i = 0; i < 20; i++) {
+    ctx.strokeStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.3)`
+    ctx.beginPath()
+    ctx.moveTo(Math.random() * width, Math.random() * height)
+    ctx.lineTo(Math.random() * width, Math.random() * height)
+    ctx.stroke()
+  }
+
+  const fontSize = 28
+  ctx.font = `bold ${fontSize}px sans-serif`
+  ctx.textBaseline = 'middle'
+
+  for (let i = 0; i < code.length; i++) {
+    const x = 16 + i * 32
+    const y = height / 2 + Math.random() * 8 - 4
+    const angle = (Math.random() - 0.5) * 0.6
+
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(angle)
+    ctx.fillStyle = `rgb(${50 + Math.random() * 100}, ${50 + Math.random() * 100}, ${50 + Math.random() * 100})`
+    ctx.fillText(code[i], 0, 0)
+    ctx.restore()
+  }
+}
 
 async function handleLogin() {
   error.value = ''
+
+  if (!captchaInput.value || captchaInput.value.toUpperCase() !== captchaCode.value) {
+    error.value = '验证码错误'
+    generateCaptcha()
+    captchaInput.value = ''
+    return
+  }
+
   loading.value = true
   try {
     await auth.login(email.value, password.value)
     router.replace('/admin/dashboard')
   } catch (e) {
     error.value = e instanceof Error ? e.message : '登录失败'
+    generateCaptcha()
+    captchaInput.value = ''
   } finally {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  generateCaptcha()
+})
 </script>
 
 <template>
@@ -49,6 +116,27 @@ async function handleLogin() {
             placeholder="admin123"
             autocomplete="current-password"
           />
+        </div>
+        <div class="field">
+          <label for="captcha">验证码</label>
+          <div class="captcha-row">
+            <input
+              id="captcha"
+              v-model="captchaInput"
+              type="text"
+              placeholder="请输入验证码"
+              maxlength="4"
+              autocomplete="off"
+            />
+            <canvas
+              ref="canvasRef"
+              width="140"
+              height="44"
+              class="captcha-canvas"
+              @click="generateCaptcha"
+              title="点击刷新验证码"
+            />
+          </div>
         </div>
         <div v-if="error" class="error">{{ error }}</div>
         <button type="submit" class="submit" :disabled="loading">
@@ -111,6 +199,25 @@ async function handleLogin() {
 
 .field input:focus {
   border-color: #42b883;
+}
+
+.captcha-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.captcha-row input {
+  flex: 1;
+}
+
+.captcha-canvas {
+  width: 140px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  background: #f9fafb;
 }
 
 .error {
