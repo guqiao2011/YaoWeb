@@ -53,6 +53,13 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
 - **提交记录**：
   - `feat: add login page and auth guard for admin routes`
 
+#### 3. 修复登录页和管理后台未全屏显示的问题
+
+- **问题原因**：默认 Vite/Vue 模板在 `src/style.css` 中将 `#app` 设置为固定宽度 `1126px` 并居中，导致登录页和管理后台无法铺满屏幕。
+- **解决方案**：移除 `#app` 的固定宽度、居中和边框样式，保留最小高度和 flex 布局。
+- **涉及文件**：
+  - `src/style.css`
+
 ---
 
 ## 后续变更约定
