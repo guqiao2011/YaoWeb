@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -15,7 +15,7 @@ async function handleLogin() {
   error.value = ''
   loading.value = true
   try {
-    await auth.login(username.value, password.value)
+    await auth.login(email.value, password.value)
     router.replace('/admin/dashboard')
   } catch (e) {
     error.value = e instanceof Error ? e.message : '登录失败'
@@ -31,13 +31,13 @@ async function handleLogin() {
       <h1 class="title">管理系统登录</h1>
       <form class="form" @submit.prevent="handleLogin">
         <div class="field">
-          <label for="username">用户名</label>
+          <label for="email">邮箱</label>
           <input
-            id="username"
-            v-model="username"
-            type="text"
-            placeholder="admin"
-            autocomplete="username"
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="admin@example.com"
+            autocomplete="email"
           />
         </div>
         <div class="field">

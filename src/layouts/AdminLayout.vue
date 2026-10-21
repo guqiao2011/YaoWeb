@@ -5,8 +5,8 @@ import { useAuthStore } from '../stores/auth'
 const auth = useAuthStore()
 const router = useRouter()
 
-function handleLogout() {
-  auth.logout()
+async function handleLogout() {
+  await auth.logout()
   router.push('/login')
 }
 </script>
@@ -32,7 +32,7 @@ function handleLogout() {
       <header class="topbar">
         <span class="breadcrumb">管理系统</span>
         <div class="user-actions">
-          <span class="user">{{ auth.user?.nickname || auth.user?.username || '管理员' }}</span>
+          <span class="user">{{ auth.user?.name || auth.user?.email || '管理员' }}</span>
           <button class="logout" @click="handleLogout">退出登录</button>
         </div>
       </header>

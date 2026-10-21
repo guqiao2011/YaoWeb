@@ -1,12 +1,13 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { account } from '../api/appwrite'
 
 interface User {
-  username: string
-  nickname?: string
+  id: string
+  email: string
+  name: string
 }
 
-const TOKEN_KEY = 'yao_token'
 const USER_KEY = 'yao_user'
 
 function getStoredUser(): User | null {
@@ -20,49 +21,71 @@ function getStoredUser(): User | null {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string | null>(localStorage.getItem(TOKEN_KEY))
   const user = ref<User | null>(getStoredUser())
-  const isAuthenticated = computed(() => !!token.value)
+  const isAuthenticated = computed(() => !!user.value)
+  const isReady = ref(false)
 
-  function setAuth(newToken: string, newUser: User) {
-    token.value = newToken
+  function setUser(newUser: User) {
     user.value = newUser
-    localStorage.setItem(TOKEN_KEY, newToken)
     localStorage.setItem(USER_KEY, JSON.stringify(newUser))
   }
 
-  function clearAuth() {
-    token.value = null
+  function clearUser() {
     user.value = null
-    localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
   }
 
-  async function login(username: string, password: string) {
-    // 模拟登录校验，后续可替换为真实接口
-    if (!username || !password) {
-      throw new Error('用户名和密码不能为空')
+  async function checkSession() {
+    try {
+      const current = await account.get()
+      setUser({
+        id: current.$id,
+        email: current.email,
+        name: current.name,
+      })
+    } catch {
+      clearUser()
+    } finally {
+      isReady.value = true
     }
-    if (username !== 'admin' || password !== 'admin123') {
-      throw new Error('用户名或密码错误')
-    }
-
-    const fakeToken = `fake-token-${Date.now()}`
-    setAuth(fakeToken, { username, nickname: '管理员' })
-    return user.value
   }
 
-  function logout() {
-    clearAuth()
+  async function login(email: string, password: string) {
+    if (!email || !password) {
+      throw new Error('邮箱和密码不能为空')
+    }
+
+    try {
+      await account.createEmailPasswordSession(email, password)
+      const current = await account.get()
+      setUser({
+        id: current.$id,
+        email: current.email,
+        name: current.name,
+      })
+      return user.value
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '登录失败'
+      throw new Error(message)
+    }
+  }
+
+  async function logout() {
+    try {
+      await account.deleteSession('current')
+    } finally {
+      clearUser()
+    }
   }
 
   return {
-    token,
     user,
     isAuthenticated,
+    isReady,
     login,
     logout,
-    setAuth,
-    clearAuth,
+    checkSession,
+    setUser,
+    clearUser,
   }
 })

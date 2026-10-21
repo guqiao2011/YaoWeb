@@ -60,6 +60,37 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
 - **涉及文件**：
   - `src/style.css`
 
+#### 4. 接入 Appwrite 作为后端认证
+
+- **需求**：使用 Appwrite 替代本地 mock 登录，实现真实的邮箱/密码登录、会话保持和退出功能。
+- **实现内容**：
+  - 安装 `appwrite` SDK。
+  - 新增 `src/api/appwrite.ts`：创建 Appwrite Client 和 Account 实例。
+  - 更新 `.env` 与 `.env.development`：新增 `VITE_APPWRITE_ENDPOINT` 和 `VITE_APPWRITE_PROJECT_ID` 环境变量占位符。
+  - 重写 `src/stores/auth.ts`：
+    - `login(email, password)` 调用 `account.createEmailPasswordSession` 创建会话。
+    - `logout()` 调用 `account.deleteSession('current')` 销毁会话。
+    - `checkSession()` 调用 `account.get()` 校验当前会话是否有效。
+    - 用户信息（id、email、name）缓存到 `localStorage`。
+  - 更新 `src/router/index.ts`：路由守卫改为异步，先校验 Appwrite 会话再决定是否放行。
+  - 更新 `src/views/LoginView.vue`：登录表单从「用户名/密码」改为「邮箱/密码」。
+  - 更新 `src/layouts/AdminLayout.vue`：显示 Appwrite 用户 name/email，退出改为异步调用。
+  - 更新 `src/api/request.ts`：移除手动附加 token 的逻辑，Appwrite 通过 session cookie 自动完成认证。
+- **环境变量**：
+  - `VITE_APPWRITE_ENDPOINT=https://nyc.cloud.appwrite.io/v1`
+  - `VITE_APPWRITE_PROJECT_ID=your_project_id`（需替换为真实 Project ID）
+- **涉及文件**：
+  - `package.json`
+  - `package-lock.json`
+  - `.env`
+  - `.env.development`
+  - `src/api/appwrite.ts`（新增）
+  - `src/stores/auth.ts`
+  - `src/router/index.ts`
+  - `src/views/LoginView.vue`
+  - `src/layouts/AdminLayout.vue`
+  - `src/api/request.ts`
+
 ---
 
 ## 后续变更约定

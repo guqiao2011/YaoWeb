@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { useAuthStore } from '../stores/auth'
 
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
@@ -8,10 +7,7 @@ const request = axios.create({
 
 request.interceptors.request.use(
   (config) => {
-    const auth = useAuthStore()
-    if (auth.token) {
-      config.headers.Authorization = `Bearer ${auth.token}`
-    }
+    // Appwrite 使用 session cookie 自动处理认证，此处无需手动添加 token
     return config
   },
   (error) => Promise.reject(error),
