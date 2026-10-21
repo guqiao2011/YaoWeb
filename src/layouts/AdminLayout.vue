@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+function handleLogout() {
+  auth.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -22,7 +31,10 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="main">
       <header class="topbar">
         <span class="breadcrumb">管理系统</span>
-        <div class="user">管理员</div>
+        <div class="user-actions">
+          <span class="user">{{ auth.user?.nickname || auth.user?.username || '管理员' }}</span>
+          <button class="logout" @click="handleLogout">退出登录</button>
+        </div>
       </header>
       <div class="content">
         <RouterView />
@@ -91,8 +103,30 @@ import { RouterLink, RouterView } from 'vue-router'
   font-weight: 500;
 }
 
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .user {
   color: #6b7280;
+}
+
+.logout {
+  padding: 0.375rem 0.75rem;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #4b5563;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.logout:hover {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 .content {
