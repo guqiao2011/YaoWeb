@@ -103,6 +103,15 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
 - **涉及文件**：
   - `src/views/LoginView.vue`
 
+#### 6. 修复登录页验证码对齐问题
+
+- **问题原因**：验证码图片使用 flex 布局，未统一 `box-sizing`，导致图片右侧与上方输入框右侧未对齐。
+- **解决方案**：
+  - 将验证码行改为 `grid` 布局，`grid-template-columns: 1fr 140px`。
+  - 为输入框和验证码图片统一添加 `box-sizing: border-box` 和 `width: 100%`。
+- **涉及文件**：
+  - `src/views/LoginView.vue`
+
 ---
 
 ## 后续变更约定

@@ -189,12 +189,14 @@ onMounted(() => {
 }
 
 .field input {
+  width: 100%;
   padding: 0.625rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.9375rem;
   outline: none;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .field input:focus {
@@ -202,13 +204,14 @@ onMounted(() => {
 }
 
 .captcha-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 140px;
   gap: 0.75rem;
   align-items: center;
 }
 
 .captcha-row input {
-  flex: 1;
+  width: 100%;
 }
 
 .captcha-canvas {
@@ -218,6 +221,7 @@ onMounted(() => {
   border: 1px solid #d1d5db;
   cursor: pointer;
   background: #f9fafb;
+  box-sizing: border-box;
 }
 
 .error {
