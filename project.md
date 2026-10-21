@@ -78,7 +78,7 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
   - 更新 `src/api/request.ts`：移除手动附加 token 的逻辑，Appwrite 通过 session cookie 自动完成认证。
 - **环境变量**：
   - `VITE_APPWRITE_ENDPOINT=https://nyc.cloud.appwrite.io/v1`
-  - `VITE_APPWRITE_PROJECT_ID=your_project_id`（需替换为真实 Project ID）
+  - `VITE_APPWRITE_PROJECT_ID=697980d100114c8bbe3b`
 - **涉及文件**：
   - `package.json`
   - `package-lock.json`
