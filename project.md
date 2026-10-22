@@ -124,6 +124,21 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
 - **涉及文件**：
   - `src/views/LoginView.vue`
 
+#### 8. 用户管理页实现分页查询
+
+- **需求**：登录成功后，在后台实现分页查询功能。
+- **实现内容**：
+  - 重写 `src/views/admin/UserListView.vue`：
+    - 用户列表改为分页查询，分页条包含总条数、每页条数切换（5/10/20）、上一页/下一页、页码导航（超过 7 页自动显示省略号）。
+    - 增加加载中、暂无数据、查询失败错误提示等状态。
+    - 数据源：配置了 `VITE_APPWRITE_DATABASE_ID` 和 `VITE_APPWRITE_USERS_COLLECTION_ID` 时，通过 Appwrite `databases.listDocuments` + `Query.limit/offset` 查询；未配置时使用 23 条本地演示数据做客户端分页。
+  - 更新 `src/api/appwrite.ts`：导出 `databases` 实例。
+  - 更新 `.env`：新增 `VITE_APPWRITE_DATABASE_ID`、`VITE_APPWRITE_USERS_COLLECTION_ID` 配置项（默认为空）。
+- **涉及文件**：
+  - `src/views/admin/UserListView.vue`
+  - `src/api/appwrite.ts`
+  - `.env`
+
 ---
 
 ## 后续变更约定
