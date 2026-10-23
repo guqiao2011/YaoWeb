@@ -139,6 +139,35 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
   - `src/api/appwrite.ts`
   - `.env`
 
+#### 9. 资源管理接入 Appwrite 并实现 CRUD
+
+- **需求**：尝试先访问一张表，方便后台进行增删改查（分页）。
+- **提供信息**：
+  - Database ID：`697981170031052d0067`
+  - Collection ID：`69ad8daa00363c1463ee`
+  - 字段：`desc`（String）、`source`（String）、`url`（String）、`group_url`（String）
+  - 权限：guest 可 Create/Read/Update，特定账号有删除权限。
+- **实现内容**：
+  - 新增 `src/views/admin/ResourceListView.vue`：
+    - 表格显示 `name`、`desc`、`url`、`group_url`、`source`、`$createdAt`。
+    - 名称使用 `name` 字段，未填写时回退显示 `$id`。
+    - 创建时间使用 `$createdAt` 并格式化为中文日期时间。
+    - 支持分页查询、新增、编辑、删除。
+  - 更新 `src/router/index.ts`：添加 `/admin/resources` 路由。
+  - 更新 `src/layouts/AdminLayout.vue`：侧边栏增加「资源管理」入口。
+  - 更新 `src/api/appwrite.ts`：导出 `databases` 实例。
+  - 更新 `.env`：配置资源管理使用的 Database ID 和 Collection ID。
+
+#### 10. 用户管理恢复为本地 mock 数据
+
+- **需求**：用户管理的数据暂时不要接入 Appwrite。
+- **实现内容**：
+  - 修改 `src/views/admin/UserListView.vue`：移除 Appwrite 相关代码，完全使用本地 23 条 mock 数据做分页展示。
+  - 简化 `.env` 注释，明确当前 Collection 只给资源管理使用。
+- **涉及文件**：
+  - `src/views/admin/UserListView.vue`
+  - `.env`
+
 ---
 
 ## 后续变更约定

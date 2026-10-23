@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { databases } from '../../api/appwrite'
-import { Query } from 'appwrite'
 
 interface UserItem {
   id: string
@@ -11,7 +9,7 @@ interface UserItem {
   status: string
 }
 
-// 未配置 Appwrite 数据库时使用的本地演示数据
+// 本地演示数据（用户管理暂不接入 Appwrite）
 const MOCK_USERS: UserItem[] = Array.from({ length: 23 }, (_, i) => ({
   id: String(i + 1),
   name: ['张三', '李四', '王五', '赵六', '孙七'][i % 5] + (i + 1),
@@ -20,16 +18,11 @@ const MOCK_USERS: UserItem[] = Array.from({ length: 23 }, (_, i) => ({
   status: i % 4 === 3 ? '禁用' : '启用',
 }))
 
-const databaseId = import.meta.env.VITE_APPWRITE_DATABASE_ID || ''
-const collectionId = import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID || ''
-const useAppwrite = !!(databaseId && collectionId)
-
 const users = ref<UserItem[]>([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(5)
 const loading = ref(false)
-const error = ref('')
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
 
@@ -50,35 +43,14 @@ const pageNumbers = computed<(number | '...')[]>(() => {
   return pages
 })
 
-async function fetchUsers() {
+function fetchUsers() {
   loading.value = true
-  error.value = ''
-  try {
-    if (useAppwrite) {
-      const res = await databases.listDocuments(databaseId, collectionId, [
-        Query.limit(pageSize.value),
-        Query.offset((page.value - 1) * pageSize.value),
-      ])
-      total.value = res.total
-      users.value = res.documents.map((doc) => ({
-        id: doc.$id,
-        name: doc.name || '-',
-        email: doc.email || '-',
-        role: doc.role || '-',
-        status: doc.status || '启用',
-      }))
-    } else {
-      // 本地演示数据分页
-      total.value = MOCK_USERS.length
-      const start = (page.value - 1) * pageSize.value
-      users.value = MOCK_USERS.slice(start, start + pageSize.value)
-    }
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : '查询失败'
-    users.value = []
-  } finally {
+  setTimeout(() => {
+    total.value = MOCK_USERS.length
+    const start = (page.value - 1) * pageSize.value
+    users.value = MOCK_USERS.slice(start, start + pageSize.value)
     loading.value = false
-  }
+  }, 200)
 }
 
 function goToPage(p: number) {
@@ -107,8 +79,6 @@ onMounted(fetchUsers)
     </div>
 
     <div class="card">
-      <div v-if="error" class="error-bar">{{ error }}</div>
-
       <table>
         <thead>
           <tr>
