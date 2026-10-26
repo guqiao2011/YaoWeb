@@ -25,6 +25,9 @@ async function handleLogout() {
         <RouterLink to="/admin/resources" class="menu-item">
           资源管理
         </RouterLink>
+        <RouterLink to="/admin/proxy" class="menu-item">
+          Proxy 管理
+        </RouterLink>
         <RouterLink to="/admin/settings" class="menu-item">
           系统设置
         </RouterLink>

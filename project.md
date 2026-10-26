@@ -168,6 +168,27 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
   - `src/views/admin/UserListView.vue`
   - `.env`
 
+#### 11. Proxy 管理接入 Appwrite
+
+- **需求**：继续对接 Proxy 表。
+- **提供信息**：
+  - Database ID：`697981170031052d0067`
+  - Collection ID：`69b3d63c001bb1b768db`
+  - 字段：`subscription`（String）、`$createdAt`
+- **实现内容**：
+  - 新增 `src/views/admin/ProxyListView.vue`：
+    - 表格显示 `ID`、`订阅信息`、`创建时间`、`操作`。
+    - 支持分页查询、新增、编辑、删除。
+    - 订阅信息使用 `textarea` 输入框，方便粘贴长文本。
+  - 更新 `src/router/index.ts`：添加 `/admin/proxy` 路由。
+  - 更新 `src/layouts/AdminLayout.vue`：侧边栏增加「Proxy 管理」入口。
+  - 更新 `.env`：添加 `VITE_APPWRITE_PROXY_COLLECTION_ID`。
+- **涉及文件**：
+  - `src/views/admin/ProxyListView.vue`
+  - `src/router/index.ts`
+  - `src/layouts/AdminLayout.vue`
+  - `.env`
+
 ---
 
 ## 后续变更约定

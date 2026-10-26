@@ -41,6 +41,11 @@ const router = createRouter({
           name: 'admin-resources',
           component: () => import('../views/admin/ResourceListView.vue'),
         },
+        {
+          path: 'proxy',
+          name: 'admin-proxy',
+          component: () => import('../views/admin/ProxyListView.vue'),
+        },
       ],
     },
   ],
