@@ -189,6 +189,29 @@ YaoWeb 是一个基于 Vue 3 + TypeScript + Vite 构建的管理系统前端项�
   - `src/layouts/AdminLayout.vue`
   - `.env`
 
+#### 12. 网盘分享接入 Appwrite
+
+- **需求**：创建一张网盘分享表，用于分享网盘资源。
+- **最终确定字段**：
+  - `title`（String）
+  - `share_url`（String）
+  - `$createdAt`（内置）
+- **提供信息**：
+  - Database ID：`697981170031052d0067`
+  - Collection ID：`6adf66a4001f946c9435`
+- **实现内容**：
+  - 新增 `src/views/admin/ShareListView.vue`：
+    - 表格显示 `标题`、`分享链接`、`创建时间`、`操作`。
+    - 支持分页查询、新增、编辑、删除。
+  - 更新 `src/router/index.ts`：添加 `/admin/shares` 路由。
+  - 更新 `src/layouts/AdminLayout.vue`：侧边栏增加「网盘分享」入口。
+  - 更新 `.env`：添加 `VITE_APPWRITE_SHARE_COLLECTION_ID`。
+- **涉及文件**：
+  - `src/views/admin/ShareListView.vue`
+  - `src/router/index.ts`
+  - `src/layouts/AdminLayout.vue`
+  - `.env`
+
 ---
 
 ## 后续变更约定

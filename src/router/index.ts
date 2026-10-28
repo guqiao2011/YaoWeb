@@ -46,6 +46,11 @@ const router = createRouter({
           name: 'admin-proxy',
           component: () => import('../views/admin/ProxyListView.vue'),
         },
+        {
+          path: 'shares',
+          name: 'admin-shares',
+          component: () => import('../views/admin/ShareListView.vue'),
+        },
       ],
     },
   ],

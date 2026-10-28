@@ -28,6 +28,9 @@ async function handleLogout() {
         <RouterLink to="/admin/proxy" class="menu-item">
           Proxy 管理
         </RouterLink>
+        <RouterLink to="/admin/shares" class="menu-item">
+          网盘分享
+        </RouterLink>
         <RouterLink to="/admin/settings" class="menu-item">
           系统设置
         </RouterLink>
