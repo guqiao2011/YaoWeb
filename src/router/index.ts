@@ -32,6 +32,11 @@ const router = createRouter({
           component: () => import('../views/admin/UserListView.vue'),
         },
         {
+          path: 'tools',
+          name: 'admin-tools',
+          component: () => import('../views/admin/ToolsView.vue'),
+        },
+        {
           path: 'settings',
           name: 'admin-settings',
           component: () => import('../views/admin/SettingsView.vue'),

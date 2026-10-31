@@ -22,6 +22,9 @@ async function handleLogout() {
         <RouterLink to="/admin/users" class="menu-item">
           用户管理
         </RouterLink>
+        <RouterLink to="/admin/tools" class="menu-item">
+          工具集
+        </RouterLink>
         <RouterLink to="/admin/resources" class="menu-item">
           资源管理
         </RouterLink>
