@@ -14,6 +14,12 @@ const inputText = ref('')
 const loading = ref(false)
 const error = ref('')
 const results = ref<CheckResult[]>([])
+
+const phone = ref('')
+const sendLoading = ref(false)
+const sendError = ref('')
+const sendResult = ref('')
+
 const functionId = import.meta.env.VITE_APPWRITE_FUNCTION_ID || ''
 
 function extractUrls(text: string): string[] {
@@ -74,6 +80,52 @@ function clearAll() {
   results.value = []
   error.value = ''
 }
+
+async function handleSendCode() {
+  sendError.value = ''
+  sendResult.value = ''
+
+  if (!functionId) {
+    sendError.value = '未配置 VITE_APPWRITE_FUNCTION_ID，请在 .env 中设置'
+    return
+  }
+
+  const value = phone.value.trim()
+  if (!/^1[3-9]\d{9}$/.test(value)) {
+    sendError.value = '手机号格式不正确'
+    return
+  }
+
+  sendLoading.value = true
+  try {
+    const execution = await functions.createExecution(
+      functionId,
+      JSON.stringify({ phone: value }),
+      false,
+      '/send-code',
+      ExecutionMethod.POST,
+      { 'Content-Type': 'application/json' },
+    )
+
+    const body = execution.responseBody
+    const data = typeof body === 'string' ? JSON.parse(body || '{}') : body
+
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    sendResult.value = `发送成功：${data.phone}`
+  } catch (e) {
+    sendError.value = e instanceof Error ? e.message : '发送失败'
+  } finally {
+    sendLoading.value = false
+  }
+}
+
+function clearSend() {
+  phone.value = ''
+  sendError.value = ''
+  sendResult.value = ''
+}
 </script>
 
 <template>
@@ -128,6 +180,29 @@ function clearAll() {
         </table>
       </div>
     </div>
+
+    <div class="card send-code">
+      <h2>发送短信验证码</h2>
+      <p class="tip">输入本人手机号，通过小职棒接口发送登录验证码。请勿对他人手机号使用。</p>
+
+      <input
+        v-model="phone"
+        class="phone-input"
+        type="tel"
+        maxlength="11"
+        placeholder="请输入11位手机号"
+      />
+
+      <div class="actions">
+        <button class="btn-primary" :disabled="sendLoading" @click="handleSendCode">
+          {{ sendLoading ? '发送中...' : '发送验证码' }}
+        </button>
+        <button class="btn-secondary" @click="clearSend">清空</button>
+      </div>
+
+      <div v-if="sendError" class="error-bar">{{ sendError }}</div>
+      <div v-if="sendResult" class="success-bar">{{ sendResult }}</div>
+    </div>
   </div>
 </template>
 
@@ -144,6 +219,10 @@ function clearAll() {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+.send-code {
+  margin-top: 1.5rem;
+}
+
 .quark-checker h2 {
   margin-bottom: 0.5rem;
   font-size: 1.25rem;
@@ -155,15 +234,19 @@ function clearAll() {
   margin-bottom: 1rem;
 }
 
-.url-input {
+.url-input,
+.phone-input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.9375rem;
   box-sizing: border-box;
-  resize: vertical;
   font-family: inherit;
+}
+
+.url-input {
+  resize: vertical;
 }
 
 .actions {
@@ -201,6 +284,15 @@ function clearAll() {
   padding: 0.5rem 0.75rem;
   background: #fee2e2;
   color: #b91c1c;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.success-bar {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: #d1fae5;
+  color: #065f46;
   border-radius: 6px;
   font-size: 0.875rem;
 }
