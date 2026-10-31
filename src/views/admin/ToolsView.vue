@@ -50,7 +50,7 @@ async function handleCheck() {
       functionId,
       JSON.stringify({ urls }),
       false,
-      '/',
+      '/quark-check',
       ExecutionMethod.POST,
       { 'Content-Type': 'application/json' },
     )
